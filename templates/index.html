@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WiFi Evil Twin Detector</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js + Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+
+<body class="bg-gray-900 text-white">
+
+<div class="max-w-6xl mx-auto p-6">
+
+    <!-- Title -->
+    <h1 class="text-4xl text-center text-cyan-400 font-bold mb-6">
+        📡 Security Dashboard
+    </h1>
+
+    <!-- Auto Refresh (1 minute) -->
+    <script>
+        setInterval(() => location.reload(), 300000);
+    </script>
+
+    <!-- Chart (Centered + Smaller) -->
+    <div class="bg-gray-800 p-4 rounded-xl mb-6 flex justify-center">
+        <div style="width: 300px; height: 300px;">
+            <canvas id="riskChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {% for net in data %}
+        <div class="bg-gray-800 p-5 rounded-xl shadow-lg hover:scale-105 transition">
+
+            <h2 class="text-xl font-bold">{{ net.ssid }}</h2>
+
+            <p class="text-sm text-gray-400">
+                Risk Score: {{ net.risk }}
+            </p>
+
+            <span class="
+                px-3 py-1 text-sm rounded-full font-bold
+                {% if net.status == 'SAFE' %}
+                    bg-green-500
+                {% elif net.status == 'SUSPICIOUS' %}
+                    bg-yellow-400 text-black
+                {% else %}
+                    bg-red-500
+                {% endif %}
+            ">
+                {{ net.status }}
+            </span>
+
+            <ul class="text-sm mt-2 text-gray-300">
+                {% for r in net.reasons %}
+                <li>• {{ r }}</li>
+                {% endfor %}
+            </ul>
+
+        </div>
+
+        {% if net.status == "HIGH RISK" %}
+        <script>
+            alert("HIGH RISK NETWORK DETECTED");
+        </script>
+        {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<!-- Chart Script -->
+<script>
+window.onload = function () {
+
+    const ctx = document.getElementById('riskChart');
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Safe', 'Suspicious', 'High Risk'],
+            datasets: [{
+                data: [
+                    {{ summary["SAFE"] | default(0) }},
+                    {{ summary["SUSPICIOUS"] | default(0) }},
+                    {{ summary["HIGH_RISK"] | default(0) }}
+                ],
+                backgroundColor: [
+                    '#22c55e',  // green
+                    '#facc15',  // yellow
+                    '#ef4444'   // red
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                    color: 'white',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    },
+                    formatter: function(value, context) {
+                        let total = context.chart._metasets[0].total;
+                        let percent = total ? ((value / total) * 100).toFixed(1) : 0;
+                        let label = context.chart.data.labels[context.dataIndex];
+                        return label + "\n" + value + " (" + percent + "%)";
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+
+};
+</script>
+
+</body>
+</html>
