@@ -34,6 +34,9 @@ A cybersecurity tool that detects potential Evil Twin WiFi attacks by analyzing 
 ```bash
 pip install -r requirements.txt
 python app.py
+
+
+
 ## 📸 Screenshots
 
 ### 🖥️ Dashboard View
