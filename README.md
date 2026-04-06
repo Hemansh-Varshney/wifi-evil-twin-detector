@@ -3,6 +3,14 @@
 ## 🚀 Overview
 A cybersecurity tool that detects potential Evil Twin WiFi attacks by analyzing nearby wireless networks using signal anomalies and BSSID duplication.
 
+## 📸 Screenshots
+
+### 🖥️ Dashboard View
+![Dashboard](screenshots/dashboard.png)
+
+### ⚠️ Risk Detection Example
+![Risk Detection](screenshots/risk.png)
+
 ## 🧠 Features
 - Detects duplicate SSIDs
 - Identifies multiple BSSIDs
@@ -37,10 +45,3 @@ python app.py
 
 
 
-## 📸 Screenshots
-
-### 🖥️ Dashboard View
-![Dashboard](screenshots/dashboard.png)
-
-### ⚠️ Risk Detection Example
-![Risk Detection](screenshots/risk.png)
